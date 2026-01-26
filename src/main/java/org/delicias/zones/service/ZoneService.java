@@ -4,13 +4,17 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
+import org.delicias.common.dto.PagedResult;
 import org.delicias.zones.domain.model.ZoneInfo;
 import org.delicias.zones.domain.repository.ZoneRepository;
+import org.delicias.zones.dto.ZoneFilterReqDTO;
 import org.delicias.zones.dto.ZoneInfoDTO;
+import org.delicias.zones.dto.ZoneItemDTO;
 import org.locationtech.jts.geom.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ZoneService {
@@ -74,6 +78,32 @@ public class ZoneService {
         if (!deleted) {
             throw new NotFoundException("Zone Not Found");
         }
+    }
+
+
+
+    public PagedResult<ZoneItemDTO> filterSearch(
+            ZoneFilterReqDTO req
+    ) {
+        List<ZoneInfo> zones = repository.searchByName(
+                req.getZoneName(),
+                req.getPage(),
+                req.getSize(),
+                req.getOrderColumn(),
+                req.toOrderDirection()
+        );
+
+        long total = repository.countByName(req.getZoneName());
+
+        return new PagedResult<>(
+                zones.stream().map(it -> ZoneItemDTO.builder()
+                        .id(it.getId())
+                        .name(it.getName())
+                        .active(it.isActive())
+                        .build()).collect(Collectors.toList()),
+                total,
+                req.getPage(),
+                req.getSize());
     }
 
     private Polygon createPolygonFromLatLng(List<List<Double>> points) {

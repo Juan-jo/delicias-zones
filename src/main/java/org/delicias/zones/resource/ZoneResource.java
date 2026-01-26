@@ -7,7 +7,9 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.delicias.common.validation.OnCreate;
+import org.delicias.common.validation.OnFilter;
 import org.delicias.common.validation.OnUpdate;
+import org.delicias.zones.dto.ZoneFilterReqDTO;
 import org.delicias.zones.dto.ZoneInfoDTO;
 import org.delicias.zones.service.ZoneService;
 
@@ -26,6 +28,16 @@ public class ZoneResource {
         service.create(req);
 
         return Response.status(Response.Status.CREATED).build();
+    }
+
+    @POST
+    @Path("/filter")
+    public Response filterSearch(
+            @Valid @ConvertGroup(to = OnFilter.class) ZoneFilterReqDTO req) {
+
+        return Response.ok(
+                service.filterSearch(req)
+        ).build();
     }
 
 

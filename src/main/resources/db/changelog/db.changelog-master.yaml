@@ -63,3 +63,53 @@ databaseChangeLog:
                   type: TIMESTAMP WITHOUT TIME ZONE
                   defaultValueComputed: CURRENT_TIMESTAMP
                   remarks: Created on
+  - changeSet:
+      id: 27032024_03
+      author: jdev
+      changes:
+        - createSequence:
+            cycle: false
+            dataType: INTEGER
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
+            maxValue: 2147483647
+            schemaName: public
+            sequenceName: zone_featured_partners_id_seq
+        - createTable:
+            tableName: zone_featured_partners
+            columns:
+              - column:
+                  name: id
+                  type: INTEGER
+                  remarks: ID Unique, PK
+                  defaultValueComputed: nextval('zone_featured_partners_id_seq')
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_zone_featured_partners_id
+              - column:
+                  name: zone_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: restaurant_id
+                  type: INTEGER
+              - column:
+                  name: sequence
+                  type: smallint
+                  remarks: Sequence in App
+              - column:
+                  name: active
+                  type: BOOL
+                  remarks: Active
+                  constraints:
+                    nullable: false
+        -  addForeignKeyConstraint:
+             baseColumnNames: zone_id
+             baseTableName: zone_featured_partners
+             constraintName: zone_featured_partners_zone_id_fkey
+             referencedColumnNames: id
+             referencedTableName: zone_info
+             validate: true

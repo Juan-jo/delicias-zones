@@ -6,6 +6,7 @@ import org.delicias.zones.dto.ZoneInfoDTO;
 import org.locationtech.jts.geom.Polygon;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "zone_info")
@@ -39,6 +40,10 @@ public class ZoneInfo {
 
     @Column(columnDefinition = "geometry(POLYGON,4326)")
     private Polygon area;
+
+    @Column(name = "created_at", insertable = false, updatable = false)
+    private LocalDateTime createdAt;
+
 
     public ZoneInfo(Integer id) {
         this.id = id;
