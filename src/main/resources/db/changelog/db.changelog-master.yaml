@@ -1,0 +1,65 @@
+databaseChangeLog:
+  - changeSet:
+      id: 27032024_01
+      author: jdev
+      changes:
+        - sql:
+            sql: >-
+              create extension if not exists "uuid-ossp";
+              create extension if not exists postgis;
+  - changeSet:
+      id: 27032024_02
+      author: jdev
+      changes:
+        - createSequence:
+            cycle: false
+            dataType: INTEGER
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
+            maxValue: 2147483647
+            schemaName: public
+            sequenceName: zone_id_seq
+        - createTable:
+            tableName: zone_info
+            columns:
+              - column:
+                  name: id
+                  type: INTEGER
+                  remarks: ID Unique, PK
+                  defaultValueComputed: nextval('zone_id_seq')
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_zone_id
+              - column:
+                  name: name
+                  type: VARCHAR
+                  remarks: Zone name
+              - column:
+                  name: has_minimum_amount
+                  type: BOOL
+                  remarks: Zone has minimum amount
+                  constraints:
+                    nullable: false
+              - column:
+                  name: minimum_amount
+                  type: DECIMAL(10,2)
+                  remarks: Order minimum amount in the zone
+              - column:
+                  name: active
+                  type: BOOL
+                  remarks: Active
+                  constraints:
+                    nullable: false
+              - column:
+                  name: area
+                  type: GEOMETRY(POLYGON, 4326)
+                  remarks: location area
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  remarks: Created on

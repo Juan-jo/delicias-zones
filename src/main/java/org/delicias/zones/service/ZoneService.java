@@ -1,0 +1,111 @@
+package org.delicias.zones.service;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
+import org.delicias.zones.domain.model.ZoneInfo;
+import org.delicias.zones.domain.repository.ZoneRepository;
+import org.delicias.zones.dto.ZoneInfoDTO;
+import org.locationtech.jts.geom.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@ApplicationScoped
+public class ZoneService {
+
+    @Inject
+    ZoneRepository repository;
+
+    @Transactional
+    public void create(ZoneInfoDTO req) {
+
+        ZoneInfo entity = ZoneInfo.builder()
+                .name(req.name())
+                .hasMinimumAmount(req.hasMinimumAmount())
+                .minimumAmount(req.minimumAmount())
+                .active(req.active())
+                .area(createPolygonFromLatLng(req.coordinates()))
+                .build();
+
+        repository.persist(entity);
+    }
+
+
+    public ZoneInfoDTO findById(Integer zoneId) {
+
+        ZoneInfo zone = repository.findById(zoneId);
+
+        if(zone == null) {
+            throw new NotFoundException("Zone Not Found");
+        }
+
+        List<List<Double>> coordinates = getCoordinates(zone.getArea());
+
+        return ZoneInfoDTO.builder()
+                .id(zone.getId())
+                .name(zone.getName())
+                .hasMinimumAmount(zone.isHasMinimumAmount())
+                .minimumAmount(zone.getMinimumAmount())
+                .active(zone.isActive())
+                .coordinates(coordinates)
+                .build();
+
+    }
+
+    @Transactional
+    public void update(ZoneInfoDTO req) {
+
+        ZoneInfo entity = repository.findById(req.id());
+
+        if(entity == null) {
+            throw new NotFoundException("Zone Not Found");
+        }
+
+        entity.update(req, createPolygonFromLatLng(req.coordinates()));
+    }
+
+    @Transactional
+    public void deleteById(Integer zoneId) {
+
+        var deleted = repository.deleteById(zoneId);
+
+        if (!deleted) {
+            throw new NotFoundException("Zone Not Found");
+        }
+    }
+
+    private Polygon createPolygonFromLatLng(List<List<Double>> points) {
+
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+
+        Coordinate[] coords = points.stream()
+                .map(p -> new Coordinate(p.get(1), p.get(0))) // (lng, lat)
+                .toArray(Coordinate[]::new);
+
+        if (!coords[0].equals2D(coords[coords.length - 1])) {
+            Coordinate[] closed = new Coordinate[coords.length + 1];
+            System.arraycopy(coords, 0, closed, 0, coords.length);
+            closed[closed.length - 1] = coords[0];
+            coords = closed;
+        }
+
+        LinearRing shell = geometryFactory.createLinearRing(coords);
+
+        return geometryFactory.createPolygon(shell, null);
+    }
+
+
+    private static List<List<Double>> getCoordinates(Polygon polygon) {
+
+        Coordinate[] cords = polygon.getExteriorRing().getCoordinates();
+
+        List<List<Double>> coordinates = new ArrayList<>();
+        for (Coordinate c : cords) {
+            List<Double> point = List.of(c.getY(), c.getX()); // [lat, lng]
+            coordinates.add(point);
+        }
+        return coordinates;
+    }
+}
