@@ -2,10 +2,10 @@ package org.delicias.mobile.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.delicias.common.SecurityContextService;
 import org.delicias.common.dto.UserZoneDTO;
 import org.delicias.mobile.dto.MobileFeaturedPartnerDTO;
-import org.delicias.common.rest.clients.UserClient;
+import org.delicias.rest.clients.UserClient;
+import org.delicias.rest.security.SecurityContextService;
 import org.delicias.zone_featured_partners.domain.repository.ZoneFeaturedPartnerRepository;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
