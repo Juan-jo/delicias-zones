@@ -111,6 +111,17 @@
 
     <!--End Keycloak Security-->
 
+    <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-rest-client-reactive</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-rest-client-jackson</artifactId>
+    </dependency>
+
+
     <!--end added-->
 
 

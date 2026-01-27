@@ -42,3 +42,9 @@ quarkus:
         authenticated:
           paths: [ "/api/*" ]
           policy: authenticated
+
+
+  rest-client:
+    users-service:
+      url: http://localhost:3000
+
