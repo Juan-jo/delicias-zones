@@ -48,10 +48,20 @@ quarkus:
       group-id: com.delicias
       artifact-id: delicias-service-core
 
+  log:
+    category:
+      "org.jboss.resteasy.reactive.client.logging":
+        level: DEBUG
+
   rest-client:
+    logging:
+      scope: all
+      body-limit: 1024
+    supabase-service:
+      url: ${SUPABASE_URL}
+      scope: jakarta.inject.Singleton
     users-service:
       url: ${CLIENT_API_USERS_URL}
-
 
 delicias:
   supabase:
