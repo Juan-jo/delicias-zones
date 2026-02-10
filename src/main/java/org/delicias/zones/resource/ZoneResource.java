@@ -1,5 +1,6 @@
 package org.delicias.zones.resource;
 
+import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.groups.ConvertGroup;
@@ -16,6 +17,7 @@ import org.delicias.zones.service.ZoneService;
 @Path("/api/zones")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Authenticated
 public class ZoneResource {
 
     @Inject
