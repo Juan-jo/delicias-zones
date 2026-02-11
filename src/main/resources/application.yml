@@ -1,6 +1,8 @@
 quarkus:
   http:
     port: 3001
+    body:
+      uploads-directory: /tmp/quarkus-uploads
 
   datasource:
     db-kind: postgresql
