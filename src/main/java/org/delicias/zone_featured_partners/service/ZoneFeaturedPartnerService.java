@@ -4,10 +4,19 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
+import org.delicias.common.dto.restaurant.RestaurantResumeDTO;
+import org.delicias.rest.clients.RestaurantClient;
 import org.delicias.zone_featured_partners.domain.model.ZoneFeaturedPartner;
 import org.delicias.zone_featured_partners.domain.repository.ZoneFeaturedPartnerRepository;
+import org.delicias.zone_featured_partners.dto.FeaturedPartnerItemDTO;
 import org.delicias.zone_featured_partners.dto.ZoneFeaturedPartnerDTO;
 import org.delicias.zones.domain.model.ZoneInfo;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ZoneFeaturedPartnerService {
@@ -15,13 +24,17 @@ public class ZoneFeaturedPartnerService {
     @Inject
     ZoneFeaturedPartnerRepository repository;
 
+    @Inject
+    @RestClient
+    RestaurantClient restaurantClient;
+
     @Transactional
-    public void create(ZoneFeaturedPartnerDTO req) {
+    public void create(Integer zoneId, ZoneFeaturedPartnerDTO req) {
 
         ZoneFeaturedPartner partner = ZoneFeaturedPartner.builder()
                 .sequence(req.sequence())
                 .active(req.active())
-                .zone(new ZoneInfo(req.zoneId()))
+                .zone(new ZoneInfo(zoneId))
                 .restaurantId(req.restaurantId())
                 .build();
 
@@ -35,32 +48,81 @@ public class ZoneFeaturedPartnerService {
 
         ZoneFeaturedPartner partner = repository.findById(req.id());
 
-        if(partner == null) {
+        if (partner == null) {
             throw new NotFoundException("ZoneFeaturedPartner not found");
         }
 
         partner.setActive(req.active());
         partner.setSequence(req.sequence());
-        partner.setRestaurantId(req.restaurantId());
-        partner.setZone(new ZoneInfo(req.zoneId()));
 
         repository.persist(partner);
     }
 
-    public ZoneFeaturedPartnerDTO findById(Integer id) {
+    @Transactional
+    public void deleteById(Integer zoneId) {
+
+        var deleted = repository.deleteById(zoneId);
+
+        if (!deleted) {
+            throw new NotFoundException("ZoneFeaturedPartner Not Found");
+        }
+    }
+
+    public FeaturedPartnerItemDTO findById(Integer id) {
+
         ZoneFeaturedPartner partner = repository.findById(id);
 
-        if(partner == null) {
+        if (partner == null) {
             throw new NotFoundException("ZoneFeaturedPartner not found");
         }
 
-        return ZoneFeaturedPartnerDTO.builder()
+        var restaurant = restaurantClient.getRestaurantsByIds(List.of(partner.getRestaurantId()))
+                .stream().findAny()
+                .orElseThrow(() -> new NotFoundException("Not Found Restaurant"));
+
+        return FeaturedPartnerItemDTO.builder()
                 .id(partner.getId())
-                .zoneId(partner.getZone().getId())
                 .sequence(partner.getSequence())
                 .active(partner.getActive())
-                .restaurantId(partner.getRestaurantId())
+                .restaurant(FeaturedPartnerItemDTO.Restaurant.builder()
+                        .name(restaurant.name())
+                        .description(restaurant.description())
+                        .logoUrl(restaurant.logoUrl())
+                        .build())
                 .build();
+    }
+
+    public List<FeaturedPartnerItemDTO> getByZone(Integer zoneId) {
+
+        List<ZoneFeaturedPartner> zones = repository.findByZoneId(zoneId);
+
+        Map<Integer, RestaurantResumeDTO> restaurantsMap = restaurantClient.getRestaurantsByIds(
+                        zones.stream().map(ZoneFeaturedPartner::getRestaurantId).toList()
+                )
+                .stream()
+                .collect(Collectors.toMap(RestaurantResumeDTO::id, p -> p));
+
+
+        return zones.stream().map(it -> {
+
+                    var restaurant = restaurantsMap.get(it.getRestaurantId());
+
+                    if (restaurant == null) return null;
+
+                    return FeaturedPartnerItemDTO.builder()
+                            .id(it.getId())
+                            .sequence(it.getSequence())
+                            .active(it.getActive())
+                            .restaurant(FeaturedPartnerItemDTO.Restaurant.builder()
+                                    .id(restaurant.id())
+                                    .name(restaurant.name())
+                                    .description(restaurant.description())
+                                    .logoUrl(restaurant.logoUrl())
+                                    .build())
+                            .build();
+                })
+                .filter(Objects::nonNull)
+                .toList();
     }
 
 }

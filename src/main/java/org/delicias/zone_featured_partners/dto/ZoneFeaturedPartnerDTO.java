@@ -10,10 +10,7 @@ public record ZoneFeaturedPartnerDTO(
         @NotNull(message = "ID type is mandatory", groups = {OnUpdate.class})
         Integer id,
 
-        @NotNull(message = "zoneId type is mandatory", groups = {OnCreate.class,OnUpdate.class})
-        Integer zoneId,
-
-        @NotNull(message = "restaurantId type is mandatory", groups = {OnCreate.class,OnUpdate.class})
+        @NotNull(message = "restaurantId type is mandatory", groups = {OnCreate.class})
         Integer restaurantId,
 
         @NotNull(message = "sequence type is mandatory", groups = {OnCreate.class,OnUpdate.class})

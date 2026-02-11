@@ -2,7 +2,7 @@ package org.delicias.mobile.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.delicias.common.dto.UserZoneDTO;
+import org.delicias.common.dto.user.UserZoneDTO;
 import org.delicias.mobile.dto.MobileFeaturedPartnerDTO;
 import org.delicias.rest.clients.UserClient;
 import org.delicias.rest.security.SecurityContextService;
