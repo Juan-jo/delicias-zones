@@ -1,8 +1,7 @@
-package org.delicias.zone_featured_partners.domain.model;
+package org.delicias.featured_partners.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.delicias.zone_featured_partners.dto.ZoneFeaturedPartnerDTO;
 import org.delicias.zones.domain.model.ZoneInfo;
 
 @Entity

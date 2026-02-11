@@ -1,4 +1,4 @@
-package org.delicias.zone_featured_partners.resource;
+package org.delicias.featured_partners.resource;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -8,8 +8,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.delicias.common.validation.OnCreate;
 import org.delicias.common.validation.OnUpdate;
-import org.delicias.zone_featured_partners.dto.ZoneFeaturedPartnerDTO;
-import org.delicias.zone_featured_partners.service.ZoneFeaturedPartnerService;
+import org.delicias.featured_partners.dto.ZoneFeaturedPartnerDTO;
+import org.delicias.featured_partners.service.ZoneFeaturedPartnerService;
 
 @Path("/api/zones/{zoneId}/featured-partners")
 @Consumes(MediaType.APPLICATION_JSON)

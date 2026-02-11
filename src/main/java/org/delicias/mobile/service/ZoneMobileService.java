@@ -6,7 +6,7 @@ import org.delicias.common.dto.user.UserZoneDTO;
 import org.delicias.mobile.dto.MobileFeaturedPartnerDTO;
 import org.delicias.rest.clients.UserClient;
 import org.delicias.rest.security.SecurityContextService;
-import org.delicias.zone_featured_partners.domain.repository.ZoneFeaturedPartnerRepository;
+import org.delicias.featured_partners.domain.repository.ZoneFeaturedPartnerRepository;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.util.Set;

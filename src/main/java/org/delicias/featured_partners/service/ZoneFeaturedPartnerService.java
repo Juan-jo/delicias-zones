@@ -1,4 +1,4 @@
-package org.delicias.zone_featured_partners.service;
+package org.delicias.featured_partners.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -6,10 +6,10 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 import org.delicias.common.dto.restaurant.RestaurantResumeDTO;
 import org.delicias.rest.clients.RestaurantClient;
-import org.delicias.zone_featured_partners.domain.model.ZoneFeaturedPartner;
-import org.delicias.zone_featured_partners.domain.repository.ZoneFeaturedPartnerRepository;
-import org.delicias.zone_featured_partners.dto.FeaturedPartnerItemDTO;
-import org.delicias.zone_featured_partners.dto.ZoneFeaturedPartnerDTO;
+import org.delicias.featured_partners.domain.model.ZoneFeaturedPartner;
+import org.delicias.featured_partners.domain.repository.ZoneFeaturedPartnerRepository;
+import org.delicias.featured_partners.dto.FeaturedPartnerItemDTO;
+import org.delicias.featured_partners.dto.ZoneFeaturedPartnerDTO;
 import org.delicias.zones.domain.model.ZoneInfo;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 

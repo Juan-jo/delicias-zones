@@ -1,4 +1,4 @@
-package org.delicias.zone_featured_partners.dto;
+package org.delicias.featured_partners.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
