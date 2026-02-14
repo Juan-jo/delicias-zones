@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
+import org.delicias.common.dto.PagedResult;
 import org.delicias.common.dto.restaurant.RestaurantResumeDTO;
 import org.delicias.rest.clients.RestaurantClient;
 import org.delicias.featured_partners.domain.model.ZoneFeaturedPartner;
@@ -92,9 +93,20 @@ public class ZoneFeaturedPartnerService {
                 .build();
     }
 
-    public List<FeaturedPartnerItemDTO> getByZone(Integer zoneId) {
+    public PagedResult<FeaturedPartnerItemDTO> getByZone(Integer zoneId, Integer page, Integer size) {
 
-        List<ZoneFeaturedPartner> zones = repository.findByZoneId(zoneId);
+        var zones = repository.getByZone(zoneId, page, size);
+
+        long total = repository.countByZone(zoneId);
+
+        if (total == 0 || zones.isEmpty()) {
+            return new PagedResult<>(
+                    List.of(),
+                    total,
+                    page,
+                    size
+            );
+        }
 
         Map<Integer, RestaurantResumeDTO> restaurantsMap = restaurantClient.getRestaurantsByIds(
                         zones.stream().map(ZoneFeaturedPartner::getRestaurantId).toList()
@@ -103,7 +115,7 @@ public class ZoneFeaturedPartnerService {
                 .collect(Collectors.toMap(RestaurantResumeDTO::id, p -> p));
 
 
-        return zones.stream().map(it -> {
+        var filtered = zones.stream().map(it -> {
 
                     var restaurant = restaurantsMap.get(it.getRestaurantId());
 
@@ -123,6 +135,13 @@ public class ZoneFeaturedPartnerService {
                 })
                 .filter(Objects::nonNull)
                 .toList();
+
+        return new PagedResult<>(
+                filtered,
+                total,
+                page,
+                size
+        );
     }
 
 }

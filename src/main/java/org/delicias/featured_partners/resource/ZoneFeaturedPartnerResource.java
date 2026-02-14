@@ -21,11 +21,13 @@ public class ZoneFeaturedPartnerResource {
 
     @GET
     public Response getByZone(
-            @PathParam("zoneId") Integer zoneId
+            @PathParam("zoneId") Integer zoneId,
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("size") @DefaultValue("20") int size
     ) {
 
         return Response.ok(
-                service.getByZone(zoneId)
+                service.getByZone(zoneId, page, size)
         ).build();
     }
 

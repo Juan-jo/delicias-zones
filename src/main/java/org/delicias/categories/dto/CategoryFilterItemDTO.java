@@ -20,7 +20,8 @@ public record CategoryFilterItemDTO(
     @Builder
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record Restaurant(
-            Integer id,
+            Integer zoneCategoryId,
+            Integer restaurantTmplId,
             String name,
             Short sequence,
             Boolean active,

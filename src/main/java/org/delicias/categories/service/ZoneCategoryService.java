@@ -204,8 +204,10 @@ public class ZoneCategoryService {
                     }
 
                     return CategoryFilterItemDTO.Restaurant.builder()
-                            .id(restaurant.id())
-                            .sequence(rel.getSequence()) // 🔥 aquí va la sequence de la relación
+                            .zoneCategoryId(rel.getId())
+                            .restaurantTmplId(restaurant.id())
+                            .sequence(rel.getSequence())
+                            .active(rel.getActive())
                             .name(restaurant.name())
                             .logoUrl(restaurant.logoUrl())
                             .build();
