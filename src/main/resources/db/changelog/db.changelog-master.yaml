@@ -230,3 +230,61 @@ databaseChangeLog:
             schemaName: public
             tableName: zone_category_restuarants
             validate: true
+
+  - changeSet:
+      id: 27032024_06
+      author: jdev
+      changes:
+        - createSequence:
+            cycle: false
+            dataType: INTEGER
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
+            maxValue: 2147483647
+            schemaName: public
+            sequenceName: zone_banner_id_seq
+        - createTable:
+            tableName: zone_banners
+            columns:
+              - column:
+                  name: id
+                  type: INTEGER
+                  remarks: ID Unique, PK
+                  defaultValueComputed: nextval('zone_banner_id_seq')
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_zone_banner_id
+              - column:
+                  name: title
+                  type: VARCHAR
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sequence
+                  type: smallint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: active
+                  type: BOOL
+                  constraints:
+                    nullable: false
+              - column:
+                  name: zone_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+        -  addForeignKeyConstraint:
+             baseColumnNames: zone_id
+             baseTableName: zone_banners
+             constraintName: banner_zone_id_fkey
+             referencedColumnNames: id
+             referencedTableName: zone_info
+             validate: true
