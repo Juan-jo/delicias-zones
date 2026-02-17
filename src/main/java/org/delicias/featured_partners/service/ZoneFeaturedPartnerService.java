@@ -6,17 +6,18 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 import org.delicias.common.dto.PagedResult;
 import org.delicias.common.dto.restaurant.RestaurantResumeDTO;
-import org.delicias.rest.clients.RestaurantClient;
 import org.delicias.featured_partners.domain.model.ZoneFeaturedPartner;
 import org.delicias.featured_partners.domain.repository.ZoneFeaturedPartnerRepository;
 import org.delicias.featured_partners.dto.FeaturedPartnerItemDTO;
 import org.delicias.featured_partners.dto.ZoneFeaturedPartnerDTO;
+import org.delicias.rest.clients.RestaurantClient;
 import org.delicias.zones.domain.model.ZoneInfo;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -77,7 +78,7 @@ public class ZoneFeaturedPartnerService {
             throw new NotFoundException("ZoneFeaturedPartner not found");
         }
 
-        var restaurant = restaurantClient.getRestaurantsByIds(List.of(partner.getRestaurantId()))
+        var restaurant = restaurantClient.getRestaurantsByIds(Set.of(partner.getRestaurantId()))
                 .stream().findAny()
                 .orElseThrow(() -> new NotFoundException("Not Found Restaurant"));
 
@@ -109,7 +110,7 @@ public class ZoneFeaturedPartnerService {
         }
 
         Map<Integer, RestaurantResumeDTO> restaurantsMap = restaurantClient.getRestaurantsByIds(
-                        zones.stream().map(ZoneFeaturedPartner::getRestaurantId).toList()
+                        zones.stream().map(ZoneFeaturedPartner::getRestaurantId).collect(Collectors.toSet())
                 )
                 .stream()
                 .collect(Collectors.toMap(RestaurantResumeDTO::id, p -> p));

@@ -17,10 +17,7 @@ import org.delicias.zones.domain.model.ZoneInfo;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -147,10 +144,11 @@ public class ZoneCategoryService {
             return new PagedResult<>(filtered, total, req.getPage(), req.getSize());
         }
 
-        List<Integer> restaurantIds = categoryRestaurants.stream()
+        Set<Integer> restaurantIds = categoryRestaurants.stream()
                 .map(CategoryRestaurant::getRestaurantTmplId)
-                .distinct()
-                .toList();
+                .collect(Collectors.toSet());
+                //.distinct()
+                //.toList();
 
         Map<Integer, RestaurantResumeDTO> restaurantsMap =
                 restaurantClient.getRestaurantsByIds(restaurantIds)

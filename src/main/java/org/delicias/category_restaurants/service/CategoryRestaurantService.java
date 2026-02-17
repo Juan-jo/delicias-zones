@@ -14,8 +14,8 @@ import org.delicias.category_restaurants.dto.CategoryRestaurantDTO;
 import org.delicias.rest.clients.RestaurantClient;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @ApplicationScoped
 public class CategoryRestaurantService {
@@ -49,7 +49,7 @@ public class CategoryRestaurantService {
         }
 
         var restaurant = restaurantClient.getRestaurantsByIds(
-                        List.of(entity.getRestaurantTmplId())
+                        Set.of(entity.getRestaurantTmplId())
                 )
                 .stream().findAny()
                 .orElseThrow(() -> new NotFoundException("RestaurantResume Not Found"));
