@@ -5,7 +5,7 @@ import lombok.Builder;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record MobileFeaturedPartnerDTO(
+public record FeaturedPartnerDTO(
         Integer restaurantTmplId,
         String name,
         String logoUrl,

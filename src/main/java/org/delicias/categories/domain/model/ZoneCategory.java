@@ -32,7 +32,7 @@ public class ZoneCategory {
 
     private Short sequence;
 
-    private boolean active;
+    private Boolean active;
 
     @Column(name = "image_url")
     private String imageUrl;

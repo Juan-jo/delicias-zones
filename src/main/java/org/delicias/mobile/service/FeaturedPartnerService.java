@@ -6,7 +6,7 @@ import org.delicias.common.dto.restaurant.RestaurantResumeDTO;
 import org.delicias.common.dto.user.UserZoneDTO;
 import org.delicias.featured_partners.domain.model.ZoneFeaturedPartner;
 import org.delicias.featured_partners.domain.repository.ZoneFeaturedPartnerRepository;
-import org.delicias.mobile.dto.MobileFeaturedPartnerDTO;
+import org.delicias.mobile.dto.FeaturedPartnerDTO;
 import org.delicias.rest.clients.RestaurantClient;
 import org.delicias.rest.clients.UserClient;
 import org.delicias.rest.security.SecurityContextService;
@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class ZoneMobileService {
+public class FeaturedPartnerService {
 
     @Inject
     @RestClient
@@ -32,7 +32,7 @@ public class ZoneMobileService {
     @Inject
     ZoneFeaturedPartnerRepository repository;
 
-    public Set<MobileFeaturedPartnerDTO> loadFeaturedPartners() {
+    public Set<FeaturedPartnerDTO> loadFeaturedPartners() {
 
         UserZoneDTO userZone = userClient.getUserZone(UUID.fromString(security.userId()));
 
@@ -51,7 +51,7 @@ public class ZoneMobileService {
 
                             if (resume == null) return null;
 
-                            return MobileFeaturedPartnerDTO.builder()
+                            return FeaturedPartnerDTO.builder()
                                     .restaurantTmplId(it.getRestaurantId())
                                     .name(resume.name())
                                     .logoUrl(resume.logoUrl())

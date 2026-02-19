@@ -82,7 +82,7 @@ public class ZoneCategoryService {
                 .id(entity.getId())
                 .name(entity.getName())
                 .sequence(entity.getSequence())
-                .active(entity.isActive())
+                .active(entity.getActive())
                 .pictureUrl(entity.getImageUrl())
                 .build();
     }
@@ -178,7 +178,7 @@ public class ZoneCategoryService {
                 .id(category.getId())
                 .name(category.getName())
                 .sequence(category.getSequence())
-                .active(category.isActive())
+                .active(category.getActive())
                 .pictureUrl(category.getImageUrl())
                 .restaurants(List.of())
                 .build();
@@ -217,7 +217,7 @@ public class ZoneCategoryService {
                 .id(category.getId())
                 .name(category.getName())
                 .sequence(category.getSequence())
-                .active(category.isActive())
+                .active(category.getActive())
                 .pictureUrl(category.getImageUrl())
                 .restaurants(restaurants)
                 .build();

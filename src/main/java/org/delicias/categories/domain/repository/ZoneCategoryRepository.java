@@ -27,6 +27,18 @@ public class ZoneCategoryRepository implements PanacheRepositoryBase<ZoneCategor
                 .list();
     }
 
+    public List<ZoneCategory> activesByZone(
+            Integer zoneId
+    ) {
+
+        return find(
+                "zone.id = ?1 and active = ?2",
+                Sort.by("sequence", Sort.Direction.Ascending),
+                zoneId, true
+        ).list();
+    }
+
+
     public long countByZone(Integer zoneId) {
         return count(queryFilter, zoneId);
     }

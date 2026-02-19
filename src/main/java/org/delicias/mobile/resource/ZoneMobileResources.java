@@ -5,23 +5,51 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.delicias.mobile.service.ZoneMobileService;
+import org.delicias.mobile.service.BannerService;
+import org.delicias.mobile.service.CategoryService;
+import org.delicias.mobile.service.FeaturedPartnerService;
 
+@Authenticated
 @Path("/api/zones/mobile")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ZoneMobileResources {
 
     @Inject
-    ZoneMobileService service;
+    FeaturedPartnerService partnerService;
+
+    @Inject
+    CategoryService categoryService;
+
+    @Inject
+    BannerService bannerService;
 
     @GET
-    @Authenticated
     @Path("/featured-partners")
     public Response loadFeaturedPartners() {
 
-        var response = service.loadFeaturedPartners();
-        return Response.ok(response).build();
+        return Response.ok(
+                partnerService.loadFeaturedPartners()
+        ).build();
     }
+
+    @GET
+    @Path("/categories")
+    public Response loadCategories() {
+
+        return Response.ok(
+                categoryService.loadCategories()
+        ).build();
+    }
+
+    @GET
+    @Path("/banners")
+    public Response loadBanners() {
+
+        return Response.ok(
+                bannerService.loadBanners()
+        ).build();
+    }
+
 
 }
