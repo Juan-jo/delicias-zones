@@ -288,3 +288,11 @@ databaseChangeLog:
              referencedColumnNames: id
              referencedTableName: zone_info
              validate: true
+  - changeSet:
+      id: 27032024_07
+      author: jdev
+      changes:
+        - dropNotNullConstraint:
+            tableName: zone_info
+            columnName: area
+            columnDataType: "GEOMETRY(POLYGON, 4326)"

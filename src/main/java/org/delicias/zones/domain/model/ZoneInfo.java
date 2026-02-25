@@ -49,12 +49,4 @@ public class ZoneInfo {
         this.id = id;
     }
 
-    public void update(ZoneInfoDTO req, Polygon area) {
-
-        name = req.name();
-        hasMinimumAmount = req.hasMinimumAmount();
-        minimumAmount = req.minimumAmount();
-        active = req.active();
-        this.area = area;
-    }
 }

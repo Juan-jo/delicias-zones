@@ -67,7 +67,14 @@ public class ZoneService {
             throw new NotFoundException("Zone Not Found");
         }
 
-        entity.update(req, createPolygonFromLatLng(req.coordinates()));
+        Polygon area = createPolygonFromLatLng(req.coordinates());
+        area.setSRID(4326);
+
+        entity.setName(req.name());
+        entity.setHasMinimumAmount(req.hasMinimumAmount());
+        entity.setMinimumAmount(req.minimumAmount());
+        entity.setActive(req.active());
+        entity.setArea(area);
     }
 
     @Transactional
@@ -123,7 +130,10 @@ public class ZoneService {
 
         LinearRing shell = geometryFactory.createLinearRing(coords);
 
-        return geometryFactory.createPolygon(shell, null);
+        Polygon polygon = geometryFactory.createPolygon(shell, null);
+        polygon.setSRID(4326);
+
+        return polygon;
     }
 
 
@@ -139,3 +149,17 @@ public class ZoneService {
         return coordinates;
     }
 }
+/*
+String wkt = area.toText();
+* int rows = repository.getEntityManager().createNativeQuery(
+                        "UPDATE zone_info SET name = :name, area = ST_GeomFromText(:wkt, 4326), " +
+                                "has_minimum_amount = :hasMin, minimum_amount = :minAmt, active = :active " +
+                                "WHERE id = :id")
+                .setParameter("name", req.name())
+                .setParameter("wkt", wkt)
+                .setParameter("hasMin", req.hasMinimumAmount())
+                .setParameter("minAmt", req.minimumAmount())
+                .setParameter("active", req.active())
+                .setParameter("id", req.id())
+                .executeUpdate();
+* */

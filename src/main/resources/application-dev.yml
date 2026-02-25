@@ -2,6 +2,7 @@ quarkus:
   hibernate-orm:
     log:
       sql: true
+      bind-parameters: true
     format-sql: true
   oidc:
     token:

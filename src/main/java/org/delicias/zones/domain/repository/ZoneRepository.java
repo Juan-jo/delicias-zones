@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import org.delicias.zones.domain.model.ZoneInfo;
 
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class ZoneRepository implements PanacheRepositoryBase<ZoneInfo, Integer> {
@@ -50,6 +51,13 @@ public class ZoneRepository implements PanacheRepositoryBase<ZoneInfo, Integer> 
                 queryFilter,
                 "%" + name + "%"
         );
+    }
+
+    public Optional<ZoneInfo> findZoneByCoordinates(double longitude, double latitude) {
+        // Usamos la función nativa ST_Contains de PostGIS
+        // 'SRID 4326' coincide con tu definición de la columna geometry
+        return find("ST_Contains(area, ST_SetSRID(ST_Point(?1, ?2), 4326)) = true",
+                longitude, latitude).firstResultOptional();
     }
 
 }
