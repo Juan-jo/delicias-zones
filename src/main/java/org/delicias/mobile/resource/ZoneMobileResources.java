@@ -43,6 +43,19 @@ public class ZoneMobileResources {
     }
 
     @GET
+    @Path("/categories/{categoryId}/restaurants")
+    public Response restaurantsByCategory(
+            @PathParam("categoryId") Integer categoryId,
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("size") @DefaultValue("10") int size
+    ) {
+        return Response.ok(
+                categoryService.restaurantsByCategory(categoryId, page, size)
+        ).build();
+    }
+
+
+    @GET
     @Path("/banners")
     public Response loadBanners() {
 
