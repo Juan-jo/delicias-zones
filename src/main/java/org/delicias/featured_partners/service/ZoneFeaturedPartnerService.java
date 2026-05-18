@@ -93,7 +93,7 @@ public class ZoneFeaturedPartnerService {
                 .restaurant(FeaturedPartnerItemDTO.Restaurant.builder()
                         .name(restaurant.name())
                         .description(restaurant.description())
-                        .logoUrl(restaurant.logoUrl())
+                        .logoUrl(storageService.thumbnailUrl(restaurant.logoUrl()))
                         .build())
                 .build();
     }
