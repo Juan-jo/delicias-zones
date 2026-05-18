@@ -8,6 +8,7 @@ import org.delicias.category_restaurants.domain.repository.CategoryRestaurantRep
 import org.delicias.common.dto.PagedResult;
 import org.delicias.common.dto.restaurant.RestaurantResumeDTO;
 import org.delicias.common.dto.user.UserZoneDTO;
+import org.delicias.minio.MinioStorageService;
 import org.delicias.mobile.dto.CategoryDTO;
 import org.delicias.mobile.dto.CategoryRestaurantItemDTO;
 import org.delicias.rest.clients.RestaurantClient;
@@ -38,6 +39,9 @@ public class CategoryService {
     @RestClient
     RestaurantClient restaurantClient;
 
+    @Inject
+    MinioStorageService minioStorageService;
+
     public List<CategoryDTO> loadCategories() {
 
         UserZoneDTO userZone = userClient.getUserZone(UUID.fromString(security.userId()));
@@ -46,7 +50,7 @@ public class CategoryService {
                 .stream().map(it-> CategoryDTO.builder()
                         .id(it.getId())
                         .name(it.getName())
-                        .imageUrl(it.getImageUrl())
+                        .imageUrl(minioStorageService.thumbnailUrl(it.getImageUrl()))
                         .build())
                 .toList();
     }

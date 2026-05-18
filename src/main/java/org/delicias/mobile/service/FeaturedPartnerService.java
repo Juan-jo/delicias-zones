@@ -6,6 +6,7 @@ import org.delicias.common.dto.restaurant.RestaurantResumeDTO;
 import org.delicias.common.dto.user.UserZoneDTO;
 import org.delicias.featured_partners.domain.model.ZoneFeaturedPartner;
 import org.delicias.featured_partners.domain.repository.ZoneFeaturedPartnerRepository;
+import org.delicias.minio.MinioStorageService;
 import org.delicias.mobile.dto.FeaturedPartnerDTO;
 import org.delicias.rest.clients.RestaurantClient;
 import org.delicias.rest.clients.UserClient;
@@ -32,6 +33,9 @@ public class FeaturedPartnerService {
     @Inject
     ZoneFeaturedPartnerRepository repository;
 
+    @Inject
+    MinioStorageService minioStorageService;
+
     public Set<FeaturedPartnerDTO> loadFeaturedPartners() {
 
         UserZoneDTO userZone = userClient.getUserZone(UUID.fromString(security.userId()));
@@ -54,7 +58,7 @@ public class FeaturedPartnerService {
                             return FeaturedPartnerDTO.builder()
                                     .restaurantTmplId(it.getRestaurantId())
                                     .name(resume.name())
-                                    .logoUrl(resume.logoUrl())
+                                    .logoUrl(minioStorageService.thumbnailUrl(resume.logoUrl()))
                                     .build();
                         }
                 ).filter(Objects::nonNull)

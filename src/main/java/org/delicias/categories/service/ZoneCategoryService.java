@@ -11,9 +11,10 @@ import org.delicias.category_restaurants.domain.model.CategoryRestaurant;
 import org.delicias.category_restaurants.domain.repository.CategoryRestaurantRepository;
 import org.delicias.common.dto.PagedResult;
 import org.delicias.common.dto.restaurant.RestaurantResumeDTO;
+import org.delicias.minio.MinioStorageService;
 import org.delicias.rest.clients.RestaurantClient;
-import org.delicias.supabase.SupabaseStorageService;
 import org.delicias.zones.domain.model.ZoneInfo;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.io.IOException;
@@ -30,17 +31,20 @@ public class ZoneCategoryService {
     CategoryRestaurantRepository categoryRestaurantRepository;
 
     @Inject
-    SupabaseStorageService storageService;
+    MinioStorageService storageService;
 
     @Inject
     @RestClient
     RestaurantClient restaurantClient;
 
+    @ConfigProperty(name = "delicias.defaultLogo")
+    String defaultLogo;
+
 
     @Transactional
     public void create(Integer zoneId, CreateCategoryDTO req) throws IOException {
 
-        String pictureUrl = storageService.uploadFile(req.picture);
+        String pictureUrl = storageService.upload(req.picture);
 
         ZoneCategory category = ZoneCategory.builder()
                 .name(req.name)
@@ -83,7 +87,7 @@ public class ZoneCategoryService {
                 .name(entity.getName())
                 .sequence(entity.getSequence())
                 .active(entity.getActive())
-                .pictureUrl(entity.getImageUrl())
+                .pictureUrl(storageService.thumbnailUrl(entity.getImageUrl()))
                 .build();
     }
 
@@ -96,8 +100,6 @@ public class ZoneCategoryService {
         if (entity == null) {
             throw new NotFoundException("ZoneCategory Not Found");
         }
-
-        deleteCurrentPicture(entity.getImageUrl());
 
         var deleted = repository.deleteById(zoneCategoryId);
 
@@ -147,8 +149,6 @@ public class ZoneCategoryService {
         Set<Integer> restaurantIds = categoryRestaurants.stream()
                 .map(CategoryRestaurant::getRestaurantTmplId)
                 .collect(Collectors.toSet());
-                //.distinct()
-                //.toList();
 
         Map<Integer, RestaurantResumeDTO> restaurantsMap =
                 restaurantClient.getRestaurantsByIds(restaurantIds)
@@ -179,7 +179,7 @@ public class ZoneCategoryService {
                 .name(category.getName())
                 .sequence(category.getSequence())
                 .active(category.getActive())
-                .pictureUrl(category.getImageUrl())
+                .pictureUrl(storageService.thumbnailUrl(category.getImageUrl()))
                 .restaurants(List.of())
                 .build();
     }
@@ -207,7 +207,7 @@ public class ZoneCategoryService {
                             .sequence(rel.getSequence())
                             .active(rel.getActive())
                             .name(restaurant.name())
-                            .logoUrl(restaurant.logoUrl())
+                            .logoUrl(storageService.thumbnailUrl(Optional.ofNullable(restaurant.logoUrl()).orElse(defaultLogo)))
                             .build();
                 })
                 .filter(Objects::nonNull)
@@ -218,7 +218,7 @@ public class ZoneCategoryService {
                 .name(category.getName())
                 .sequence(category.getSequence())
                 .active(category.getActive())
-                .pictureUrl(category.getImageUrl())
+                .pictureUrl(storageService.thumbnailUrl(category.getImageUrl()))
                 .restaurants(restaurants)
                 .build();
     }
@@ -231,19 +231,12 @@ public class ZoneCategoryService {
             return;
         }
 
-        String newUrl = storageService.uploadFile(req.picture);
+        String newUrl = storageService.upload(req.picture);
 
         if (newUrl == null) {
             return;
         }
-
-        deleteCurrentPicture(entity.getImageUrl());
         entity.setImageUrl(newUrl);
     }
 
-    private void deleteCurrentPicture(String pictureUrl) {
-        if(Optional.ofNullable(pictureUrl).isPresent()) {
-            storageService.deleteFile(pictureUrl);
-        }
-    }
 }

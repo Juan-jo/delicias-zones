@@ -10,6 +10,7 @@ import org.delicias.featured_partners.domain.model.ZoneFeaturedPartner;
 import org.delicias.featured_partners.domain.repository.ZoneFeaturedPartnerRepository;
 import org.delicias.featured_partners.dto.FeaturedPartnerItemDTO;
 import org.delicias.featured_partners.dto.ZoneFeaturedPartnerDTO;
+import org.delicias.minio.MinioStorageService;
 import org.delicias.rest.clients.RestaurantClient;
 import org.delicias.zones.domain.model.ZoneInfo;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -29,6 +30,9 @@ public class ZoneFeaturedPartnerService {
     @Inject
     @RestClient
     RestaurantClient restaurantClient;
+
+    @Inject
+    MinioStorageService storageService;
 
     @Transactional
     public void create(Integer zoneId, ZoneFeaturedPartnerDTO req) {
@@ -130,7 +134,7 @@ public class ZoneFeaturedPartnerService {
                                     .id(restaurant.id())
                                     .name(restaurant.name())
                                     .description(restaurant.description())
-                                    .logoUrl(restaurant.logoUrl())
+                                    .logoUrl(storageService.thumbnailUrl(restaurant.logoUrl()))
                                     .build())
                             .build();
                 })

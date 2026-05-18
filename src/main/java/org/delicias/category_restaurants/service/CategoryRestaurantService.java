@@ -11,10 +11,13 @@ import org.delicias.category_restaurants.domain.model.CategoryRestaurant;
 import org.delicias.category_restaurants.domain.repository.CategoryRestaurantRepository;
 import org.delicias.category_restaurants.dto.AddRestaurantToCategoryDTO;
 import org.delicias.category_restaurants.dto.CategoryRestaurantDTO;
+import org.delicias.minio.MinioStorageService;
 import org.delicias.rest.clients.RestaurantClient;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @ApplicationScoped
@@ -26,6 +29,14 @@ public class CategoryRestaurantService {
     @Inject
     @RestClient
     RestaurantClient restaurantClient;
+
+    @Inject
+    MinioStorageService minioStorageService;
+
+
+    @ConfigProperty(name = "delicias.defaultLogo")
+    String defaultLogo;
+
 
     @Transactional
     public void create(Integer zoneCategoryId, AddRestaurantToCategoryDTO req) {
@@ -61,7 +72,7 @@ public class CategoryRestaurantService {
                 .restaurant(CategoryRestaurantDTO.Restaurant.builder()
                         .id(restaurant.id())
                         .name(restaurant.name())
-                        .logoUrl(restaurant.logoUrl())
+                        .logoUrl(minioStorageService.thumbnailUrl(Optional.ofNullable(restaurant.logoUrl()).orElse(defaultLogo)))
                         .build())
                 .build();
     }
