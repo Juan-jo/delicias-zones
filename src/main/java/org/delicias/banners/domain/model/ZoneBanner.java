@@ -32,6 +32,9 @@ public class ZoneBanner {
 
     private Boolean active;
 
+    @Column(name = "picture_url")
+    private String pictureUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zone_id", referencedColumnName = "id", nullable = false)
     private ZoneInfo zone;

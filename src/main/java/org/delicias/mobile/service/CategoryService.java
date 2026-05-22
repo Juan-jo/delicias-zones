@@ -91,7 +91,8 @@ public class CategoryService {
                             .name(restaurant.name())
                             .description(restaurant.description())
                             .address(restaurant.address())
-                            .pictureUrl(restaurant.logoUrl())
+                            .pictureUrl(minioStorageService.smallImage(restaurant.logoUrl()))
+                            .coverUrl(minioStorageService.imgBannerUrl(restaurant.coverUrl()))
                             .build();
 
                 })

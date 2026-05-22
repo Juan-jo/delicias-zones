@@ -5,5 +5,6 @@ import lombok.Builder;
 @Builder
 public record BannerDTO(
         String title,
-        String description
+        String description,
+        String pictureUrl
 ) { }

@@ -9,5 +9,6 @@ public record FeaturedPartnerDTO(
         Integer restaurantTmplId,
         String name,
         String logoUrl,
-        String address
+        String address,
+        String coverUrl
 ) { }

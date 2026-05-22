@@ -11,6 +11,7 @@ public record CategoryRestaurantItemDTO (
         String name,
         String description,
         String pictureUrl,
+        String coverUrl,
         String address
 )
 { }

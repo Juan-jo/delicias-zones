@@ -6,7 +6,7 @@ import jakarta.validation.groups.ConvertGroup;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.delicias.banners.dto.ZoneBannerDTO;
+import org.delicias.banners.dto.ZoneBannerReqDTO;
 import org.delicias.banners.service.ZoneBannerService;
 import org.delicias.common.validation.OnCreate;
 import org.delicias.common.validation.OnUpdate;
@@ -35,17 +35,21 @@ public class ZoneBannerResource {
     }
 
     @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response create(
             @PathParam("zoneId") Integer zoneId,
-            @Valid @ConvertGroup(to = OnCreate.class) ZoneBannerDTO req) {
+            @Valid @ConvertGroup(to = OnCreate.class)
+            @BeanParam ZoneBannerReqDTO req) {
 
         service.create(zoneId, req);
         return Response.status(Response.Status.CREATED).build();
     }
 
     @PUT
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response update(
-            @Valid @ConvertGroup(to = OnUpdate.class) ZoneBannerDTO req) {
+            @Valid @ConvertGroup(to = OnUpdate.class)
+            @BeanParam ZoneBannerReqDTO req) {
 
         service.update(req);
         return Response.status(Response.Status.OK).build();

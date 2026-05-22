@@ -4,9 +4,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.delicias.banners.domain.repository.ZoneBannerRepository;
 import org.delicias.common.dto.user.UserZoneDTO;
+import org.delicias.minio.MinioStorageService;
 import org.delicias.mobile.dto.BannerDTO;
 import org.delicias.rest.clients.UserClient;
 import org.delicias.rest.security.SecurityContextService;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.util.List;
@@ -25,6 +27,9 @@ public class BannerService {
     @RestClient
     UserClient userClient;
 
+    @Inject
+    MinioStorageService storageService;
+
 
     public List<BannerDTO> loadBanners() {
 
@@ -34,6 +39,9 @@ public class BannerService {
                 .stream().map(it-> BannerDTO.builder()
                         .title(it.getTitle())
                         .description(it.getDescription())
+                        .pictureUrl(
+                                storageService.fitThumbnailUrl(it.getPictureUrl())
+                        )
                         .build())
                 .toList();
     }

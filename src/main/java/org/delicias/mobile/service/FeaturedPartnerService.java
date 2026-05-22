@@ -58,7 +58,9 @@ public class FeaturedPartnerService {
                             return FeaturedPartnerDTO.builder()
                                     .restaurantTmplId(it.getRestaurantId())
                                     .name(resume.name())
-                                    .logoUrl(minioStorageService.thumbnailUrl(resume.logoUrl()))
+                                    .address(resume.address())
+                                    .logoUrl(minioStorageService.smallImage(resume.logoUrl()))
+                                    .coverUrl(minioStorageService.imgBannerUrl(resume.coverUrl()))
                                     .build();
                         }
                 ).filter(Objects::nonNull)

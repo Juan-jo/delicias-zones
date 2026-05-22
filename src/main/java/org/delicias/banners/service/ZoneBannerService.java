@@ -8,11 +8,15 @@ import jakarta.ws.rs.NotFoundException;
 import org.delicias.banners.domain.model.ZoneBanner;
 import org.delicias.banners.domain.repository.ZoneBannerRepository;
 import org.delicias.banners.dto.ZoneBannerDTO;
+import org.delicias.banners.dto.ZoneBannerReqDTO;
 import org.delicias.banners.dto.ZoneBannerItemDTO;
 import org.delicias.common.dto.PagedResult;
+import org.delicias.minio.MinioStorageService;
 import org.delicias.zones.domain.model.ZoneInfo;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class ZoneBannerService {
@@ -20,36 +24,48 @@ public class ZoneBannerService {
     @Inject
     ZoneBannerRepository repository;
 
+    @Inject
+    MinioStorageService storageService;
+
+    @ConfigProperty(name = "delicias.defaultLogo")
+    String defaultLogo;
+
     @Transactional
-    public void create(Integer zoneId, ZoneBannerDTO req) {
+    public void create(Integer zoneId, ZoneBannerReqDTO req) {
+
+        String pictureUrl = storageService.upload(req.picture);
 
         repository.persist(
                 ZoneBanner.builder()
-                        .title(req.title())
-                        .description(req.description())
-                        .sequence(req.sequence())
-                        .active(req.active())
+                        .title(req.title)
+                        .description(req.description)
+                        .sequence(req.sequence)
+                        .active(req.active)
                         .zone(new ZoneInfo(zoneId))
+                        .pictureUrl(pictureUrl)
                         .build()
         );
 
     }
 
     @Transactional
-    public void update(ZoneBannerDTO req) {
+    public void update(ZoneBannerReqDTO req) {
 
-        var entity = repository.findById(req.id());
+        var entity = repository.findByIdOptional(req.id)
+                .orElseThrow(() -> new NotFoundException("ZoneBanner not found"));
 
+        String pictureUrl = Optional.ofNullable(req.picture)
+                .map(r -> storageService.upload(r))
+                .orElse(null);
 
-        if (entity == null) {
-            throw new NotFoundException("ZoneBanner not found");
+        entity.setTitle(req.title);
+        entity.setDescription(req.description);
+        entity.setSequence(req.sequence);
+        entity.setActive(req.active);
+
+        if (pictureUrl != null) {
+            entity.setPictureUrl(pictureUrl);
         }
-
-        entity.setTitle(req.title());
-        entity.setDescription(req.description());
-        entity.setSequence(req.sequence());
-        entity.setActive(req.active());
-
         repository.persist(entity);
     }
 
@@ -67,6 +83,8 @@ public class ZoneBannerService {
                 .description(entity.getDescription())
                 .sequence(entity.getSequence())
                 .active(entity.getActive())
+                .pictureUrl(storageService.thumbnailUrl(Optional.ofNullable(entity.getPictureUrl())
+                        .orElse(defaultLogo)))
                 .build();
     }
 

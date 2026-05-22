@@ -296,3 +296,15 @@ databaseChangeLog:
             tableName: zone_info
             columnName: area
             columnDataType: "GEOMETRY(POLYGON, 4326)"
+  - changeSet:
+      id: 27032024_08
+      author: jdev
+      changes:
+        - addColumn:
+            tableName: zone_banners
+            columns:
+              - column:
+                  name: picture_url
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: true
